@@ -1,0 +1,164 @@
+package docker
+
+import (
+	"fmt"
+	"io"
+
+	"github.com/acul009/control-mono/api/deployments/gen/deployments"
+
+	"github.com/docker/docker/api/types"
+	dockerContainer "github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/filters"
+	dockerErrors "github.com/docker/docker/errdefs"
+)
+
+func (docker *Docker) schedule(container *deployments.Container, deployment string) error {
+	var err error = docker.createContainer(container, true, deployment)
+
+	identifier := docker.getContainerIdentifier(container.Name, deployment)
+
+	switch err.(type) {
+
+	case dockerErrors.ErrConflict:
+		docker.deleteContainer(identifier)
+		err = docker.createContainer(container, false, deployment)
+		break
+	}
+
+	if err != nil {
+		err = fmt.Errorf("Error scheduling deployment: %w", err)
+	}
+
+	err = docker.startContainer(identifier)
+
+	if err != nil {
+		err = fmt.Errorf("Error starting deployment: %w", err)
+	}
+
+	return err
+}
+
+func (docker *Docker) getContainerIdentifier(containerName string, deployment string) string {
+	return docker.schedulerName + "-" + deployment + "-" + containerName
+}
+
+const MANGER_LABEL = LABEL_PREFIX + ".manager"
+const DEPLOYMENT_LABEL = LABEL_PREFIX + ".deployment"
+const CONTAINER_LABEL = LABEL_PREFIX + ".name"
+
+func (docker *Docker) createContainer(container *deployments.Container, pullImage bool, deployment string) error {
+	var err error
+	if pullImage {
+		err = docker.pullImage(container.Image)
+	}
+
+	if err != nil {
+		return fmt.Errorf("Error requesting image: %w", err)
+	}
+
+	_, err = docker.cli.ContainerCreate(docker.ctx, &dockerContainer.Config{
+		Image: container.Image,
+		Labels: map[string]string{
+			MANGER_LABEL:     docker.schedulerName,
+			DEPLOYMENT_LABEL: deployment,
+			CONTAINER_LABEL:  container.Name,
+		},
+	},
+		&dockerContainer.HostConfig{
+			RestartPolicy: dockerContainer.RestartPolicy{
+				Name: "always",
+			},
+			Tmpfs: map[string]string{
+				"/tmp": "rw",
+			},
+		},
+		nil, nil,
+		docker.getContainerIdentifier(container.Name, deployment),
+	)
+
+	return err
+}
+
+func (docker *Docker) pullImage(image string) error {
+	reader, err := docker.cli.ImagePull(docker.ctx, image, types.ImagePullOptions{})
+	defer reader.Close()
+	var readerError error = nil
+	var buf []byte = make([]byte, 1024)
+	for ; readerError != io.EOF; _, readerError = reader.Read(buf) {
+	}
+
+	if err != nil {
+		return fmt.Errorf("Error pulling image: %w", err)
+	}
+	return nil
+}
+
+func (docker *Docker) deleteContainer(identifier string) error {
+	err := docker.cli.ContainerRemove(docker.ctx, identifier, types.ContainerRemoveOptions{
+		Force: true,
+	})
+
+	if err != nil {
+		return fmt.Errorf("Error deleting container: %w", err)
+	}
+
+	return nil
+}
+
+func (docker *Docker) startContainer(identifier string) error {
+	err := docker.cli.ContainerStart(docker.ctx, identifier, types.ContainerStartOptions{})
+
+	if err != nil {
+		return fmt.Errorf("Error starting container: %w", err)
+	}
+
+	return nil
+}
+
+func (docker *Docker) unschedule(identifier string) error {
+	err := docker.deleteContainer(identifier)
+	if err != nil {
+		return fmt.Errorf("Error unscheduling deployment: %w", err)
+	}
+	return nil
+}
+
+func (docker *Docker) listContainers(deployment string) ([]string, error) {
+	filters := filters.NewArgs(
+		filters.KeyValuePair{
+			Key:   "label",
+			Value: MANGER_LABEL + "=" + docker.schedulerName,
+		},
+		filters.KeyValuePair{
+			Key:   "label",
+			Value: DEPLOYMENT_LABEL + "=" + deployment,
+		},
+	)
+	return docker.listContainersForFilter(filters)
+}
+
+func (docker *Docker) listContainersForFilter(filterList filters.Args) ([]string, error) {
+	var dockerContainers []types.Container
+	var err error
+
+	dockerContainers, err = docker.cli.ContainerList(docker.ctx, types.ContainerListOptions{
+		All:     true,
+		Filters: filterList,
+	})
+
+	if err != nil {
+		return make([]string, 0), fmt.Errorf("Error loading Deployments: %w", err)
+	}
+
+	var containers []string = make([]string, 0, len(dockerContainers))
+
+	for _, container := range dockerContainers {
+
+		if container.Labels[MANGER_LABEL] != docker.schedulerName {
+			continue
+		}
+
+		containers = append(containers, container.Labels[CONTAINER_LABEL])
+	}
+	return containers, nil
+}
