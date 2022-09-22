@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	deployments "github.com/acul009/control-mono/api/deployments/gen/deployments"
-	deploymentssvr "github.com/acul009/control-mono/api/deployments/gen/http/deployments/server"
+	deployments "github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
+	deploymentssvr "github.com/acul009/control-panel-2/src/api/deployments/gen/http/deployments/server"
 	goahttp "goa.design/goa/v3/http"
 	httpmdlwr "goa.design/goa/v3/http/middleware"
 	"goa.design/goa/v3/middleware"

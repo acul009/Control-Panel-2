@@ -12,8 +12,8 @@ import (
 	"sync"
 	"syscall"
 
-	deploymentsapi "github.com/acul009/control-mono/api/deployments"
-	deployments "github.com/acul009/control-mono/api/deployments/gen/deployments"
+	deploymentsapi "github.com/acul009/control-panel-2/src/api/deployments"
+	deployments "github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
 )
 
 func main() {

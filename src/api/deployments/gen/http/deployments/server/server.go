@@ -3,7 +3,7 @@
 // deployments HTTP server
 //
 // Command:
-// $ goa gen github.com/acul009/control-mono/api/deployments/design
+// $ goa gen github.com/acul009/control-panel-2/src/api/deployments/design
 
 package server
 
@@ -11,7 +11,7 @@ import (
 	"context"
 	"net/http"
 
-	deployments "github.com/acul009/control-mono/api/deployments/gen/deployments"
+	deployments "github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )

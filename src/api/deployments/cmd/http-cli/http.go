@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	cli "github.com/acul009/control-mono/api/deployments/gen/http/cli/http"
+	cli "github.com/acul009/control-panel-2/src/api/deployments/gen/http/cli/http"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )

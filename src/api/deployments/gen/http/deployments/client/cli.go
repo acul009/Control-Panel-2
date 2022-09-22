@@ -3,7 +3,7 @@
 // deployments HTTP client CLI support package
 //
 // Command:
-// $ goa gen github.com/acul009/control-mono/api/deployments/design
+// $ goa gen github.com/acul009/control-panel-2/src/api/deployments/design
 
 package client
 
@@ -11,7 +11,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	deployments "github.com/acul009/control-mono/api/deployments/gen/deployments"
+	deployments "github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
 	goa "goa.design/goa/v3/pkg"
 )
 
@@ -23,7 +23,7 @@ func BuildUpsertPayload(deploymentsUpsertBody string) (*deployments.Deployment, 
 	{
 		err = json.Unmarshal([]byte(deploymentsUpsertBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"containers\": [\n         {\n            \"image\": \"Quisquam sed.\",\n            \"name\": \"Dignissimos et nemo sunt commodi iste.\",\n            \"services\": [\n               \"Rem fugiat est.\",\n               \"Quas enim magnam libero consectetur qui nesciunt.\",\n               \"Quam libero.\"\n            ],\n            \"usedParams\": [\n               {\n                  \"environment\": [\n                     \"Voluptatem laboriosam perspiciatis est.\",\n                     \"Est veritatis.\",\n                     \"Quo aut recusandae.\",\n                     \"Temporibus asperiores et voluptatem a consequatur ut.\"\n                  ],\n                  \"files\": [\n                     \"Voluptatem necessitatibus labore aliquam consequatur est.\",\n                     \"Ullam voluptate esse.\",\n                     \"Aut et totam voluptatem quia illo voluptate.\"\n                  ],\n                  \"name\": \"z\"\n               },\n               {\n                  \"environment\": [\n                     \"Voluptatem laboriosam perspiciatis est.\",\n                     \"Est veritatis.\",\n                     \"Quo aut recusandae.\",\n                     \"Temporibus asperiores et voluptatem a consequatur ut.\"\n                  ],\n                  \"files\": [\n                     \"Voluptatem necessitatibus labore aliquam consequatur est.\",\n                     \"Ullam voluptate esse.\",\n                     \"Aut et totam voluptatem quia illo voluptate.\"\n                  ],\n                  \"name\": \"z\"\n               }\n            ]\n         },\n         {\n            \"image\": \"Quisquam sed.\",\n            \"name\": \"Dignissimos et nemo sunt commodi iste.\",\n            \"services\": [\n               \"Rem fugiat est.\",\n               \"Quas enim magnam libero consectetur qui nesciunt.\",\n               \"Quam libero.\"\n            ],\n            \"usedParams\": [\n               {\n                  \"environment\": [\n                     \"Voluptatem laboriosam perspiciatis est.\",\n                     \"Est veritatis.\",\n                     \"Quo aut recusandae.\",\n                     \"Temporibus asperiores et voluptatem a consequatur ut.\"\n                  ],\n                  \"files\": [\n                     \"Voluptatem necessitatibus labore aliquam consequatur est.\",\n                     \"Ullam voluptate esse.\",\n                     \"Aut et totam voluptatem quia illo voluptate.\"\n                  ],\n                  \"name\": \"z\"\n               },\n               {\n                  \"environment\": [\n                     \"Voluptatem laboriosam perspiciatis est.\",\n                     \"Est veritatis.\",\n                     \"Quo aut recusandae.\",\n                     \"Temporibus asperiores et voluptatem a consequatur ut.\"\n                  ],\n                  \"files\": [\n                     \"Voluptatem necessitatibus labore aliquam consequatur est.\",\n                     \"Ullam voluptate esse.\",\n                     \"Aut et totam voluptatem quia illo voluptate.\"\n                  ],\n                  \"name\": \"z\"\n               }\n            ]\n         }\n      ],\n      \"name\": \"Necessitatibus et autem placeat et.\",\n      \"params\": [\n         {\n            \"name\": \"bym\",\n            \"source\": \"static\",\n            \"type\": \"bool\"\n         },\n         {\n            \"name\": \"bym\",\n            \"source\": \"static\",\n            \"type\": \"bool\"\n         },\n         {\n            \"name\": \"bym\",\n            \"source\": \"static\",\n            \"type\": \"bool\"\n         }\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"containers\": [\n         {\n            \"image\": \"Voluptatibus maiores qui voluptatem.\",\n            \"name\": \"Iste non quisquam sed architecto.\",\n            \"parameters\": [\n               {\n                  \"environment\": [\n                     \"Veritatis libero.\",\n                     \"Aut recusandae et temporibus asperiores.\"\n                  ],\n                  \"files\": [\n                     \"A consequatur ut qui natus voluptatem necessitatibus.\",\n                     \"Aliquam consequatur est voluptates ullam voluptate esse.\",\n                     \"Aut et totam voluptatem quia illo voluptate.\",\n                     \"Ex rem fugiat est animi.\"\n                  ],\n                  \"name\": \"j\"\n               },\n               {\n                  \"environment\": [\n                     \"Veritatis libero.\",\n                     \"Aut recusandae et temporibus asperiores.\"\n                  ],\n                  \"files\": [\n                     \"A consequatur ut qui natus voluptatem necessitatibus.\",\n                     \"Aliquam consequatur est voluptates ullam voluptate esse.\",\n                     \"Aut et totam voluptatem quia illo voluptate.\",\n                     \"Ex rem fugiat est animi.\"\n                  ],\n                  \"name\": \"j\"\n               }\n            ],\n            \"ports\": [\n               {\n                  \"container\": 21062,\n                  \"host\": 3960,\n                  \"protocol\": \"udp\"\n               },\n               {\n                  \"container\": 21062,\n                  \"host\": 3960,\n                  \"protocol\": \"udp\"\n               }\n            ],\n            \"services\": [\n               \"Magnam libero consectetur qui.\",\n               \"Alias quam.\"\n            ]\n         }\n      ],\n      \"name\": \"Cupiditate dignissimos et nemo.\",\n      \"parameters\": [\n         {\n            \"name\": \"xm\",\n            \"source\": \"configurable\",\n            \"type\": \"int\",\n            \"value\": \"Eius alias.\"\n         },\n         {\n            \"name\": \"xm\",\n            \"source\": \"configurable\",\n            \"type\": \"int\",\n            \"value\": \"Eius alias.\"\n         },\n         {\n            \"name\": \"xm\",\n            \"source\": \"configurable\",\n            \"type\": \"int\",\n            \"value\": \"Eius alias.\"\n         }\n      ]\n   }'")
 		}
 		if body.Containers == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("containers", "body"))
@@ -38,7 +38,7 @@ func BuildUpsertPayload(deploymentsUpsertBody string) (*deployments.Deployment, 
 				}
 			}
 		}
-		for _, e := range body.Params {
+		for _, e := range body.Parameters {
 			if e != nil {
 				if err2 := ValidateParameterRequestBody(e); err2 != nil {
 					err = goa.MergeErrors(err, err2)
@@ -58,10 +58,10 @@ func BuildUpsertPayload(deploymentsUpsertBody string) (*deployments.Deployment, 
 			v.Containers[i] = marshalContainerRequestBodyToDeploymentsContainer(val)
 		}
 	}
-	if body.Params != nil {
-		v.Params = make([]*deployments.Parameter, len(body.Params))
-		for i, val := range body.Params {
-			v.Params[i] = marshalParameterRequestBodyToDeploymentsParameter(val)
+	if body.Parameters != nil {
+		v.Parameters = make([]*deployments.Parameter, len(body.Parameters))
+		for i, val := range body.Parameters {
+			v.Parameters[i] = marshalParameterRequestBodyToDeploymentsParameter(val)
 		}
 	}
 

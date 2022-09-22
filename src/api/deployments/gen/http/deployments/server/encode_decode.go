@@ -3,7 +3,7 @@
 // deployments HTTP server encoders and decoders
 //
 // Command:
-// $ goa gen github.com/acul009/control-mono/api/deployments/design
+// $ goa gen github.com/acul009/control-panel-2/src/api/deployments/design
 
 package server
 
@@ -13,7 +13,7 @@ import (
 	"io"
 	"net/http"
 
-	deployments "github.com/acul009/control-mono/api/deployments/gen/deployments"
+	deployments "github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )
@@ -182,16 +182,22 @@ func unmarshalContainerRequestBodyToDeploymentsContainer(v *ContainerRequestBody
 		Name:  *v.Name,
 		Image: *v.Image,
 	}
-	if v.UsedParams != nil {
-		res.UsedParams = make([]*deployments.ParameterUsage, len(v.UsedParams))
-		for i, val := range v.UsedParams {
-			res.UsedParams[i] = unmarshalParameterUsageRequestBodyToDeploymentsParameterUsage(val)
+	if v.Parameters != nil {
+		res.Parameters = make([]*deployments.ParameterUsage, len(v.Parameters))
+		for i, val := range v.Parameters {
+			res.Parameters[i] = unmarshalParameterUsageRequestBodyToDeploymentsParameterUsage(val)
 		}
 	}
 	if v.Services != nil {
 		res.Services = make([]string, len(v.Services))
 		for i, val := range v.Services {
 			res.Services[i] = val
+		}
+	}
+	if v.Ports != nil {
+		res.Ports = make([]*deployments.Portmapping, len(v.Ports))
+		for i, val := range v.Ports {
+			res.Ports[i] = unmarshalPortmappingRequestBodyToDeploymentsPortmapping(val)
 		}
 	}
 
@@ -224,6 +230,21 @@ func unmarshalParameterUsageRequestBodyToDeploymentsParameterUsage(v *ParameterU
 	return res
 }
 
+// unmarshalPortmappingRequestBodyToDeploymentsPortmapping builds a value of
+// type *deployments.Portmapping from a value of type *PortmappingRequestBody.
+func unmarshalPortmappingRequestBodyToDeploymentsPortmapping(v *PortmappingRequestBody) *deployments.Portmapping {
+	if v == nil {
+		return nil
+	}
+	res := &deployments.Portmapping{
+		Host:      *v.Host,
+		Container: *v.Container,
+		Protocol:  *v.Protocol,
+	}
+
+	return res
+}
+
 // unmarshalParameterRequestBodyToDeploymentsParameter builds a value of type
 // *deployments.Parameter from a value of type *ParameterRequestBody.
 func unmarshalParameterRequestBodyToDeploymentsParameter(v *ParameterRequestBody) *deployments.Parameter {
@@ -234,6 +255,7 @@ func unmarshalParameterRequestBodyToDeploymentsParameter(v *ParameterRequestBody
 		Name:   *v.Name,
 		Source: *v.Source,
 		Type:   *v.Type,
+		Value:  v.Value,
 	}
 
 	return res
@@ -246,16 +268,22 @@ func marshalDeploymentsContainerToContainerResponseBody(v *deployments.Container
 		Name:  v.Name,
 		Image: v.Image,
 	}
-	if v.UsedParams != nil {
-		res.UsedParams = make([]*ParameterUsageResponseBody, len(v.UsedParams))
-		for i, val := range v.UsedParams {
-			res.UsedParams[i] = marshalDeploymentsParameterUsageToParameterUsageResponseBody(val)
+	if v.Parameters != nil {
+		res.Parameters = make([]*ParameterUsageResponseBody, len(v.Parameters))
+		for i, val := range v.Parameters {
+			res.Parameters[i] = marshalDeploymentsParameterUsageToParameterUsageResponseBody(val)
 		}
 	}
 	if v.Services != nil {
 		res.Services = make([]string, len(v.Services))
 		for i, val := range v.Services {
 			res.Services[i] = val
+		}
+	}
+	if v.Ports != nil {
+		res.Ports = make([]*PortmappingResponseBody, len(v.Ports))
+		for i, val := range v.Ports {
+			res.Ports[i] = marshalDeploymentsPortmappingToPortmappingResponseBody(val)
 		}
 	}
 
@@ -288,6 +316,21 @@ func marshalDeploymentsParameterUsageToParameterUsageResponseBody(v *deployments
 	return res
 }
 
+// marshalDeploymentsPortmappingToPortmappingResponseBody builds a value of
+// type *PortmappingResponseBody from a value of type *deployments.Portmapping.
+func marshalDeploymentsPortmappingToPortmappingResponseBody(v *deployments.Portmapping) *PortmappingResponseBody {
+	if v == nil {
+		return nil
+	}
+	res := &PortmappingResponseBody{
+		Host:      v.Host,
+		Container: v.Container,
+		Protocol:  v.Protocol,
+	}
+
+	return res
+}
+
 // marshalDeploymentsParameterToParameterResponseBody builds a value of type
 // *ParameterResponseBody from a value of type *deployments.Parameter.
 func marshalDeploymentsParameterToParameterResponseBody(v *deployments.Parameter) *ParameterResponseBody {
@@ -298,6 +341,7 @@ func marshalDeploymentsParameterToParameterResponseBody(v *deployments.Parameter
 		Name:   v.Name,
 		Source: v.Source,
 		Type:   v.Type,
+		Value:  v.Value,
 	}
 
 	return res

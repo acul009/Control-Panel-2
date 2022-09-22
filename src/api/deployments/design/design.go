@@ -24,6 +24,7 @@ var Parameter = Type("Parameter", func() {
 	Attribute("type", func() {
 		Enum("string", "int", "bool", "password")
 	})
+	Attribute("value")
 	Required("name", "source", "type")
 })
 
@@ -35,11 +36,27 @@ var ParameterUsage = Type("ParameterUsage", func() {
 	Attribute("files", ArrayOf(String))
 })
 
+var PortMapping = Type("Portmapping", func() {
+	Attribute("host", UInt32, func() {
+		Minimum(1)
+		Maximum(65535)
+	})
+	Attribute("container", UInt32, func() {
+		Minimum(1)
+		Maximum(65535)
+	})
+	Attribute("protocol", func() {
+		Enum("tcp", "udp")
+	})
+	Required("host", "container", "protocol")
+})
+
 var Container = Type("Container", func() {
 	Attribute("name", String)
 	Attribute("image", String)
-	Attribute("usedParams", ArrayOf(ParameterUsage))
+	Attribute("parameters", ArrayOf(ParameterUsage))
 	Attribute("services", ArrayOf(String))
+	Attribute("ports", ArrayOf(PortMapping))
 	Required("name", "image")
 })
 
@@ -48,7 +65,7 @@ var Deployment = Type("Deployment", func() {
 	Attribute("containers", ArrayOf(Container), func() {
 		MinLength(1)
 	})
-	Attribute("params", ArrayOf(Parameter))
+	Attribute("parameters", ArrayOf(Parameter))
 	Required("name", "containers")
 })
 

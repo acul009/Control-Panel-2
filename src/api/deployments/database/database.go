@@ -1,9 +1,9 @@
 package database
 
 import (
-	"github.com/acul009/control-mono/api/deployments/database/filesystemdb"
-	"github.com/acul009/control-mono/api/deployments/gen/deployments"
-	"github.com/acul009/control-mono/api/deployments/scheduler"
+	"github.com/acul009/control-panel-2/src/api/deployments/database/filesystemdb"
+	"github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
+	"github.com/acul009/control-panel-2/src/api/deployments/scheduler"
 	"github.com/spf13/viper"
 )
 

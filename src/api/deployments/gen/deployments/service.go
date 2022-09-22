@@ -3,7 +3,7 @@
 // deployments service
 //
 // Command:
-// $ goa gen github.com/acul009/control-mono/api/deployments/design
+// $ goa gen github.com/acul009/control-panel-2/src/api/deployments/design
 
 package deployments
 
@@ -38,27 +38,35 @@ var MethodNames = [4]string{"upsert", "list", "get", "delete"}
 type Container struct {
 	Name       string
 	Image      string
-	UsedParams []*ParameterUsage
+	Parameters []*ParameterUsage
 	Services   []string
+	Ports      []*Portmapping
 }
 
 // Deployment is the payload type of the deployments service upsert method.
 type Deployment struct {
 	Name       string
 	Containers []*Container
-	Params     []*Parameter
+	Parameters []*Parameter
 }
 
 type Parameter struct {
 	Name   string
 	Source string
 	Type   string
+	Value  *string
 }
 
 type ParameterUsage struct {
 	Name        *string
 	Environment []string
 	Files       []string
+}
+
+type Portmapping struct {
+	Host      uint32
+	Container uint32
+	Protocol  string
 }
 
 // MakeDeploymentNotFound builds a goa.ServiceError from an error.

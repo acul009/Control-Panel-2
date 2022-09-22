@@ -1,8 +1,8 @@
 package scheduler
 
 import (
-	"github.com/acul009/control-mono/api/deployments/gen/deployments"
-	"github.com/acul009/control-mono/api/deployments/scheduler/docker"
+	"github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
+	"github.com/acul009/control-panel-2/src/api/deployments/scheduler/docker"
 	"github.com/spf13/viper"
 )
 

@@ -21,11 +21,11 @@ func CreateDockerScheduler(schedulerName string) (*Docker, error) {
 	cli, err = client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 
 	if err != nil {
-		return nil, fmt.Errorf("Error creating docker scheduler: %w", err)
+		return nil, fmt.Errorf("error creating docker scheduler: %w", err)
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("Error creating docker scheduler: %w", err)
+		return nil, fmt.Errorf("error creating docker scheduler: %w", err)
 	}
 
 	var scheduler *Docker = &Docker{

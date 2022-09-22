@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/acul009/control-mono/api/deployments/database"
-	dbErrors "github.com/acul009/control-mono/api/deployments/database/errors"
-	deployments "github.com/acul009/control-mono/api/deployments/gen/deployments"
+	"github.com/acul009/control-panel-2/src/api/deployments/config"
+	"github.com/acul009/control-panel-2/src/api/deployments/database"
+	dbErrors "github.com/acul009/control-panel-2/src/api/deployments/database/errors"
+	deployments "github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
 )
+
+var viperError = config.InitViper()
 
 // deployments service example implementation.
 // The example methods log the requests and return zero values.
@@ -26,7 +29,7 @@ var db database.Database = database.GetDatabase()
 // Upsert implements upsert.
 func (s *deploymentssrvc) Upsert(ctx context.Context, p *deployments.Deployment) (err error) {
 	s.logger.Print("deployments.upsert")
-	db.Save(p)
+	err = db.Save(p)
 	return
 }
 

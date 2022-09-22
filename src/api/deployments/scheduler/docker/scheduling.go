@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/acul009/control-mono/api/deployments/gen/deployments"
+	"github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
 
 	"github.com/docker/docker/api/types"
 	dockerContainer "github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
 	dockerErrors "github.com/docker/docker/errdefs"
+	"github.com/docker/go-connections/nat"
 )
 
 func (docker *Docker) schedule(container *deployments.Container, deployment string) error {
@@ -22,20 +23,19 @@ func (docker *Docker) schedule(container *deployments.Container, deployment stri
 	case dockerErrors.ErrConflict:
 		docker.deleteContainer(identifier)
 		err = docker.createContainer(container, false, deployment)
-		break
 	}
 
 	if err != nil {
-		err = fmt.Errorf("Error scheduling deployment: %w", err)
+		return fmt.Errorf("error scheduling deployment: %w", err)
 	}
 
 	err = docker.startContainer(identifier)
 
 	if err != nil {
-		err = fmt.Errorf("Error starting deployment: %w", err)
+		return fmt.Errorf("error starting deployment: %w", err)
 	}
 
-	return err
+	return nil
 }
 
 func (docker *Docker) getContainerIdentifier(containerName string, deployment string) string {
@@ -53,7 +53,7 @@ func (docker *Docker) createContainer(container *deployments.Container, pullImag
 	}
 
 	if err != nil {
-		return fmt.Errorf("Error requesting image: %w", err)
+		return fmt.Errorf("error requesting image: %w", err)
 	}
 
 	_, err = docker.cli.ContainerCreate(docker.ctx, &dockerContainer.Config{
@@ -71,12 +71,23 @@ func (docker *Docker) createContainer(container *deployments.Container, pullImag
 			Tmpfs: map[string]string{
 				"/tmp": "rw",
 			},
+			PortBindings: docker.createPortMap(container),
 		},
 		nil, nil,
 		docker.getContainerIdentifier(container.Name, deployment),
 	)
 
 	return err
+}
+
+func (docker *Docker) createPortMap(container *deployments.Container) nat.PortMap {
+	var ports nat.PortMap = make(nat.PortMap, len(container.Ports))
+	for _, portMapping := range container.Ports {
+		ports[nat.Port(fmt.Sprintf("%v/%s", portMapping.Host, portMapping.Protocol))] = []nat.PortBinding{{
+			HostPort: fmt.Sprintf("%v", portMapping.Host),
+		}}
+	}
+	return ports
 }
 
 func (docker *Docker) pullImage(image string) error {
@@ -88,7 +99,7 @@ func (docker *Docker) pullImage(image string) error {
 	}
 
 	if err != nil {
-		return fmt.Errorf("Error pulling image: %w", err)
+		return fmt.Errorf("error pulling image: %w", err)
 	}
 	return nil
 }
@@ -99,7 +110,7 @@ func (docker *Docker) deleteContainer(identifier string) error {
 	})
 
 	if err != nil {
-		return fmt.Errorf("Error deleting container: %w", err)
+		return fmt.Errorf("error deleting container: %w", err)
 	}
 
 	return nil
@@ -109,7 +120,7 @@ func (docker *Docker) startContainer(identifier string) error {
 	err := docker.cli.ContainerStart(docker.ctx, identifier, types.ContainerStartOptions{})
 
 	if err != nil {
-		return fmt.Errorf("Error starting container: %w", err)
+		return fmt.Errorf("error starting container: %w", err)
 	}
 
 	return nil
@@ -118,7 +129,7 @@ func (docker *Docker) startContainer(identifier string) error {
 func (docker *Docker) unschedule(identifier string) error {
 	err := docker.deleteContainer(identifier)
 	if err != nil {
-		return fmt.Errorf("Error unscheduling deployment: %w", err)
+		return fmt.Errorf("error unscheduling deployment: %w", err)
 	}
 	return nil
 }
@@ -147,7 +158,7 @@ func (docker *Docker) listContainersForFilter(filterList filters.Args) ([]string
 	})
 
 	if err != nil {
-		return make([]string, 0), fmt.Errorf("Error loading Deployments: %w", err)
+		return make([]string, 0), fmt.Errorf("error loading Deployments: %w", err)
 	}
 
 	var containers []string = make([]string, 0, len(dockerContainers))

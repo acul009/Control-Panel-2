@@ -5,12 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 
 	"os"
 
-	dbErrors "github.com/acul009/control-mono/api/deployments/database/errors"
-	"github.com/acul009/control-mono/api/deployments/gen/deployments"
+	dbErrors "github.com/acul009/control-panel-2/src/api/deployments/database/errors"
+	"github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
 	"github.com/spf13/viper"
 )
 
@@ -19,7 +18,7 @@ type FilesystemDB struct {
 }
 
 func CreateFilesystemDB() *FilesystemDB {
-	viper.SetDefault("database.fs.location", "/home/acul/control-mono/db/")
+	viper.SetDefault("database.fs.location", "/var/control-panel-2/db/")
 	db := &FilesystemDB{
 		path: viper.GetString("database.fs.location"),
 	}
@@ -45,12 +44,13 @@ func (db FilesystemDB) Save(deployment *deployments.Deployment) error {
 	if err != nil {
 		return err
 	}
-	ioutil.WriteFile(filename, bytes, 0700)
+	os.WriteFile(filename, bytes, os.ModePerm)
+	os.WriteFile(filename, bytes, os.ModePerm)
 	return nil
 }
 
 func (db FilesystemDB) List() []string {
-	files, err := ioutil.ReadDir(db.path)
+	files, err := os.ReadDir(db.path)
 	if err != nil {
 		panic(err)
 	}
@@ -71,11 +71,15 @@ func (db FilesystemDB) Load(name string) (*deployments.Deployment, error) {
 		if errors.Is(err, os.ErrNotExist) {
 			return nil, dbErrors.MakeNotFoundError(name)
 		}
-		panic(err)
+		return nil, err
 	}
 
 	var bytes []byte
 	bytes, err = io.ReadAll(file)
+
+	if err != nil {
+		return nil, err
+	}
 
 	deployment := &deployments.Deployment{}
 	json.Unmarshal(bytes, deployment)
@@ -88,7 +92,7 @@ func (db FilesystemDB) Delete(name string) error {
 		if errors.Is(err, os.ErrNotExist) {
 			return dbErrors.MakeNotFoundError(name)
 		}
-		panic(err)
+		return err
 	}
 	return nil
 }

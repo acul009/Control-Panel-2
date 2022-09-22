@@ -3,14 +3,14 @@
 // deployments HTTP client types
 //
 // Command:
-// $ goa gen github.com/acul009/control-mono/api/deployments/design
+// $ goa gen github.com/acul009/control-panel-2/src/api/deployments/design
 
 package client
 
 import (
 	"unicode/utf8"
 
-	deployments "github.com/acul009/control-mono/api/deployments/gen/deployments"
+	deployments "github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
 	goa "goa.design/goa/v3/pkg"
 )
 
@@ -19,7 +19,7 @@ import (
 type UpsertRequestBody struct {
 	Name       string                  `form:"name" json:"name" xml:"name"`
 	Containers []*ContainerRequestBody `form:"containers" json:"containers" xml:"containers"`
-	Params     []*ParameterRequestBody `form:"params,omitempty" json:"params,omitempty" xml:"params,omitempty"`
+	Parameters []*ParameterRequestBody `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
 }
 
 // GetResponseBody is the type of the "deployments" service "get" endpoint HTTP
@@ -27,7 +27,7 @@ type UpsertRequestBody struct {
 type GetResponseBody struct {
 	Name       *string                  `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	Containers []*ContainerResponseBody `form:"containers,omitempty" json:"containers,omitempty" xml:"containers,omitempty"`
-	Params     []*ParameterResponseBody `form:"params,omitempty" json:"params,omitempty" xml:"params,omitempty"`
+	Parameters []*ParameterResponseBody `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
 }
 
 // GetDeploymentNotFoundResponseBody is the type of the "deployments" service
@@ -71,8 +71,9 @@ type DeleteDeploymentNotFoundResponseBody struct {
 type ContainerRequestBody struct {
 	Name       string                       `form:"name" json:"name" xml:"name"`
 	Image      string                       `form:"image" json:"image" xml:"image"`
-	UsedParams []*ParameterUsageRequestBody `form:"usedParams,omitempty" json:"usedParams,omitempty" xml:"usedParams,omitempty"`
+	Parameters []*ParameterUsageRequestBody `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
 	Services   []string                     `form:"services,omitempty" json:"services,omitempty" xml:"services,omitempty"`
+	Ports      []*PortmappingRequestBody    `form:"ports,omitempty" json:"ports,omitempty" xml:"ports,omitempty"`
 }
 
 // ParameterUsageRequestBody is used to define fields on request body types.
@@ -82,19 +83,28 @@ type ParameterUsageRequestBody struct {
 	Files       []string `form:"files,omitempty" json:"files,omitempty" xml:"files,omitempty"`
 }
 
+// PortmappingRequestBody is used to define fields on request body types.
+type PortmappingRequestBody struct {
+	Host      uint32 `form:"host" json:"host" xml:"host"`
+	Container uint32 `form:"container" json:"container" xml:"container"`
+	Protocol  string `form:"protocol" json:"protocol" xml:"protocol"`
+}
+
 // ParameterRequestBody is used to define fields on request body types.
 type ParameterRequestBody struct {
-	Name   string `form:"name" json:"name" xml:"name"`
-	Source string `form:"source" json:"source" xml:"source"`
-	Type   string `form:"type" json:"type" xml:"type"`
+	Name   string  `form:"name" json:"name" xml:"name"`
+	Source string  `form:"source" json:"source" xml:"source"`
+	Type   string  `form:"type" json:"type" xml:"type"`
+	Value  *string `form:"value,omitempty" json:"value,omitempty" xml:"value,omitempty"`
 }
 
 // ContainerResponseBody is used to define fields on response body types.
 type ContainerResponseBody struct {
 	Name       *string                       `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	Image      *string                       `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
-	UsedParams []*ParameterUsageResponseBody `form:"usedParams,omitempty" json:"usedParams,omitempty" xml:"usedParams,omitempty"`
+	Parameters []*ParameterUsageResponseBody `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
 	Services   []string                      `form:"services,omitempty" json:"services,omitempty" xml:"services,omitempty"`
+	Ports      []*PortmappingResponseBody    `form:"ports,omitempty" json:"ports,omitempty" xml:"ports,omitempty"`
 }
 
 // ParameterUsageResponseBody is used to define fields on response body types.
@@ -104,11 +114,19 @@ type ParameterUsageResponseBody struct {
 	Files       []string `form:"files,omitempty" json:"files,omitempty" xml:"files,omitempty"`
 }
 
+// PortmappingResponseBody is used to define fields on response body types.
+type PortmappingResponseBody struct {
+	Host      *uint32 `form:"host,omitempty" json:"host,omitempty" xml:"host,omitempty"`
+	Container *uint32 `form:"container,omitempty" json:"container,omitempty" xml:"container,omitempty"`
+	Protocol  *string `form:"protocol,omitempty" json:"protocol,omitempty" xml:"protocol,omitempty"`
+}
+
 // ParameterResponseBody is used to define fields on response body types.
 type ParameterResponseBody struct {
 	Name   *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	Source *string `form:"source,omitempty" json:"source,omitempty" xml:"source,omitempty"`
 	Type   *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
+	Value  *string `form:"value,omitempty" json:"value,omitempty" xml:"value,omitempty"`
 }
 
 // NewUpsertRequestBody builds the HTTP request body from the payload of the
@@ -123,10 +141,10 @@ func NewUpsertRequestBody(p *deployments.Deployment) *UpsertRequestBody {
 			body.Containers[i] = marshalDeploymentsContainerToContainerRequestBody(val)
 		}
 	}
-	if p.Params != nil {
-		body.Params = make([]*ParameterRequestBody, len(p.Params))
-		for i, val := range p.Params {
-			body.Params[i] = marshalDeploymentsParameterToParameterRequestBody(val)
+	if p.Parameters != nil {
+		body.Parameters = make([]*ParameterRequestBody, len(p.Parameters))
+		for i, val := range p.Parameters {
+			body.Parameters[i] = marshalDeploymentsParameterToParameterRequestBody(val)
 		}
 	}
 	return body
@@ -142,10 +160,10 @@ func NewGetDeploymentOK(body *GetResponseBody) *deployments.Deployment {
 	for i, val := range body.Containers {
 		v.Containers[i] = unmarshalContainerResponseBodyToDeploymentsContainer(val)
 	}
-	if body.Params != nil {
-		v.Params = make([]*deployments.Parameter, len(body.Params))
-		for i, val := range body.Params {
-			v.Params[i] = unmarshalParameterResponseBodyToDeploymentsParameter(val)
+	if body.Parameters != nil {
+		v.Parameters = make([]*deployments.Parameter, len(body.Parameters))
+		for i, val := range body.Parameters {
+			v.Parameters[i] = unmarshalParameterResponseBodyToDeploymentsParameter(val)
 		}
 	}
 
@@ -200,7 +218,7 @@ func ValidateGetResponseBody(body *GetResponseBody) (err error) {
 			}
 		}
 	}
-	for _, e := range body.Params {
+	for _, e := range body.Parameters {
 		if e != nil {
 			if err2 := ValidateParameterResponseBody(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)
@@ -261,9 +279,16 @@ func ValidateDeleteDeploymentNotFoundResponseBody(body *DeleteDeploymentNotFound
 // ValidateContainerRequestBody runs the validations defined on
 // ContainerRequestBody
 func ValidateContainerRequestBody(body *ContainerRequestBody) (err error) {
-	for _, e := range body.UsedParams {
+	for _, e := range body.Parameters {
 		if e != nil {
 			if err2 := ValidateParameterUsageRequestBody(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	for _, e := range body.Ports {
+		if e != nil {
+			if err2 := ValidatePortmappingRequestBody(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
@@ -278,6 +303,27 @@ func ValidateParameterUsageRequestBody(body *ParameterUsageRequestBody) (err err
 		if utf8.RuneCountInString(*body.Name) < 1 {
 			err = goa.MergeErrors(err, goa.InvalidLengthError("body.name", *body.Name, utf8.RuneCountInString(*body.Name), 1, true))
 		}
+	}
+	return
+}
+
+// ValidatePortmappingRequestBody runs the validations defined on
+// PortmappingRequestBody
+func ValidatePortmappingRequestBody(body *PortmappingRequestBody) (err error) {
+	if body.Host < 1 {
+		err = goa.MergeErrors(err, goa.InvalidRangeError("body.host", body.Host, 1, true))
+	}
+	if body.Host > 65535 {
+		err = goa.MergeErrors(err, goa.InvalidRangeError("body.host", body.Host, 65535, false))
+	}
+	if body.Container < 1 {
+		err = goa.MergeErrors(err, goa.InvalidRangeError("body.container", body.Container, 1, true))
+	}
+	if body.Container > 65535 {
+		err = goa.MergeErrors(err, goa.InvalidRangeError("body.container", body.Container, 65535, false))
+	}
+	if !(body.Protocol == "tcp" || body.Protocol == "udp") {
+		err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.protocol", body.Protocol, []interface{}{"tcp", "udp"}))
 	}
 	return
 }
@@ -306,9 +352,16 @@ func ValidateContainerResponseBody(body *ContainerResponseBody) (err error) {
 	if body.Image == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
 	}
-	for _, e := range body.UsedParams {
+	for _, e := range body.Parameters {
 		if e != nil {
 			if err2 := ValidateParameterUsageResponseBody(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	for _, e := range body.Ports {
+		if e != nil {
+			if err2 := ValidatePortmappingResponseBody(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
@@ -322,6 +375,46 @@ func ValidateParameterUsageResponseBody(body *ParameterUsageResponseBody) (err e
 	if body.Name != nil {
 		if utf8.RuneCountInString(*body.Name) < 1 {
 			err = goa.MergeErrors(err, goa.InvalidLengthError("body.name", *body.Name, utf8.RuneCountInString(*body.Name), 1, true))
+		}
+	}
+	return
+}
+
+// ValidatePortmappingResponseBody runs the validations defined on
+// PortmappingResponseBody
+func ValidatePortmappingResponseBody(body *PortmappingResponseBody) (err error) {
+	if body.Host == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("host", "body"))
+	}
+	if body.Container == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("container", "body"))
+	}
+	if body.Protocol == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("protocol", "body"))
+	}
+	if body.Host != nil {
+		if *body.Host < 1 {
+			err = goa.MergeErrors(err, goa.InvalidRangeError("body.host", *body.Host, 1, true))
+		}
+	}
+	if body.Host != nil {
+		if *body.Host > 65535 {
+			err = goa.MergeErrors(err, goa.InvalidRangeError("body.host", *body.Host, 65535, false))
+		}
+	}
+	if body.Container != nil {
+		if *body.Container < 1 {
+			err = goa.MergeErrors(err, goa.InvalidRangeError("body.container", *body.Container, 1, true))
+		}
+	}
+	if body.Container != nil {
+		if *body.Container > 65535 {
+			err = goa.MergeErrors(err, goa.InvalidRangeError("body.container", *body.Container, 65535, false))
+		}
+	}
+	if body.Protocol != nil {
+		if !(*body.Protocol == "tcp" || *body.Protocol == "udp") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.protocol", *body.Protocol, []interface{}{"tcp", "udp"}))
 		}
 	}
 	return
