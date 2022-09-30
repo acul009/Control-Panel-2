@@ -71,7 +71,8 @@ func (docker *Docker) createContainer(container *deployments.Container, pullImag
 			Tmpfs: map[string]string{
 				"/tmp": "rw",
 			},
-			PortBindings: docker.createPortMap(container),
+			PortBindings:   docker.createPortMap(container),
+			ReadonlyRootfs: true,
 		},
 		nil, nil,
 		docker.getContainerIdentifier(container.Name, deployment),

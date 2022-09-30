@@ -18,14 +18,8 @@ var Parameter = Type("Parameter", func() {
 	Attribute("name", String, func() {
 		MinLength(1)
 	})
-	Attribute("source", func() {
-		Enum("static", "generated", "configurable")
-	})
-	Attribute("type", func() {
-		Enum("string", "int", "bool", "password")
-	})
 	Attribute("value")
-	Required("name", "source", "type")
+	Required("name", "value")
 })
 
 var ParameterUsage = Type("ParameterUsage", func() {
