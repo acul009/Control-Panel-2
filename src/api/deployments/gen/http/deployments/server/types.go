@@ -92,10 +92,8 @@ type PortmappingResponseBody struct {
 
 // ParameterResponseBody is used to define fields on response body types.
 type ParameterResponseBody struct {
-	Name   string  `form:"name" json:"name" xml:"name"`
-	Source string  `form:"source" json:"source" xml:"source"`
-	Type   string  `form:"type" json:"type" xml:"type"`
-	Value  *string `form:"value,omitempty" json:"value,omitempty" xml:"value,omitempty"`
+	Name  string `form:"name" json:"name" xml:"name"`
+	Value string `form:"value" json:"value" xml:"value"`
 }
 
 // ContainerRequestBody is used to define fields on request body types.
@@ -123,10 +121,8 @@ type PortmappingRequestBody struct {
 
 // ParameterRequestBody is used to define fields on request body types.
 type ParameterRequestBody struct {
-	Name   *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
-	Source *string `form:"source,omitempty" json:"source,omitempty" xml:"source,omitempty"`
-	Type   *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
-	Value  *string `form:"value,omitempty" json:"value,omitempty" xml:"value,omitempty"`
+	Name  *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	Value *string `form:"value,omitempty" json:"value,omitempty" xml:"value,omitempty"`
 }
 
 // NewGetResponseBody builds the HTTP response body from the result of the
@@ -308,25 +304,12 @@ func ValidateParameterRequestBody(body *ParameterRequestBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
-	if body.Source == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("source", "body"))
-	}
-	if body.Type == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("type", "body"))
+	if body.Value == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("value", "body"))
 	}
 	if body.Name != nil {
 		if utf8.RuneCountInString(*body.Name) < 1 {
 			err = goa.MergeErrors(err, goa.InvalidLengthError("body.name", *body.Name, utf8.RuneCountInString(*body.Name), 1, true))
-		}
-	}
-	if body.Source != nil {
-		if !(*body.Source == "static" || *body.Source == "generated" || *body.Source == "configurable") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.source", *body.Source, []interface{}{"static", "generated", "configurable"}))
-		}
-	}
-	if body.Type != nil {
-		if !(*body.Type == "string" || *body.Type == "int" || *body.Type == "bool" || *body.Type == "password") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.type", *body.Type, []interface{}{"string", "int", "bool", "password"}))
 		}
 	}
 	return

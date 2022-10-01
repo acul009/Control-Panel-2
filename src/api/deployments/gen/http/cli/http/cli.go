@@ -31,73 +31,131 @@ func UsageExamples() string {
 	return os.Args[0] + ` deployments upsert --body '{
       "containers": [
          {
-            "image": "Voluptatibus maiores qui voluptatem.",
-            "name": "Iste non quisquam sed architecto.",
+            "image": "Quisquam sed.",
+            "name": "Dignissimos et nemo sunt commodi iste.",
             "parameters": [
                {
                   "environment": [
-                     "Veritatis libero.",
-                     "Aut recusandae et temporibus asperiores."
+                     "Voluptatem laboriosam perspiciatis est.",
+                     "Est veritatis.",
+                     "Quo aut recusandae.",
+                     "Temporibus asperiores et voluptatem a consequatur ut."
                   ],
                   "files": [
-                     "A consequatur ut qui natus voluptatem necessitatibus.",
-                     "Aliquam consequatur est voluptates ullam voluptate esse.",
-                     "Aut et totam voluptatem quia illo voluptate.",
-                     "Ex rem fugiat est animi."
+                     "Voluptatem necessitatibus labore aliquam consequatur est.",
+                     "Ullam voluptate esse.",
+                     "Aut et totam voluptatem quia illo voluptate."
                   ],
-                  "name": "j"
+                  "name": "z"
                },
                {
                   "environment": [
-                     "Veritatis libero.",
-                     "Aut recusandae et temporibus asperiores."
+                     "Voluptatem laboriosam perspiciatis est.",
+                     "Est veritatis.",
+                     "Quo aut recusandae.",
+                     "Temporibus asperiores et voluptatem a consequatur ut."
                   ],
                   "files": [
-                     "A consequatur ut qui natus voluptatem necessitatibus.",
-                     "Aliquam consequatur est voluptates ullam voluptate esse.",
-                     "Aut et totam voluptatem quia illo voluptate.",
-                     "Ex rem fugiat est animi."
+                     "Voluptatem necessitatibus labore aliquam consequatur est.",
+                     "Ullam voluptate esse.",
+                     "Aut et totam voluptatem quia illo voluptate."
                   ],
-                  "name": "j"
+                  "name": "z"
                }
             ],
             "ports": [
                {
-                  "container": 21062,
-                  "host": 3960,
-                  "protocol": "udp"
+                  "container": 63148,
+                  "host": 21062,
+                  "protocol": "tcp"
                },
                {
-                  "container": 21062,
-                  "host": 3960,
-                  "protocol": "udp"
+                  "container": 63148,
+                  "host": 21062,
+                  "protocol": "tcp"
+               },
+               {
+                  "container": 63148,
+                  "host": 21062,
+                  "protocol": "tcp"
                }
             ],
             "services": [
-               "Magnam libero consectetur qui.",
-               "Alias quam."
+               "Rem fugiat est.",
+               "Quas enim magnam libero consectetur qui nesciunt.",
+               "Quam libero."
+            ]
+         },
+         {
+            "image": "Quisquam sed.",
+            "name": "Dignissimos et nemo sunt commodi iste.",
+            "parameters": [
+               {
+                  "environment": [
+                     "Voluptatem laboriosam perspiciatis est.",
+                     "Est veritatis.",
+                     "Quo aut recusandae.",
+                     "Temporibus asperiores et voluptatem a consequatur ut."
+                  ],
+                  "files": [
+                     "Voluptatem necessitatibus labore aliquam consequatur est.",
+                     "Ullam voluptate esse.",
+                     "Aut et totam voluptatem quia illo voluptate."
+                  ],
+                  "name": "z"
+               },
+               {
+                  "environment": [
+                     "Voluptatem laboriosam perspiciatis est.",
+                     "Est veritatis.",
+                     "Quo aut recusandae.",
+                     "Temporibus asperiores et voluptatem a consequatur ut."
+                  ],
+                  "files": [
+                     "Voluptatem necessitatibus labore aliquam consequatur est.",
+                     "Ullam voluptate esse.",
+                     "Aut et totam voluptatem quia illo voluptate."
+                  ],
+                  "name": "z"
+               }
+            ],
+            "ports": [
+               {
+                  "container": 63148,
+                  "host": 21062,
+                  "protocol": "tcp"
+               },
+               {
+                  "container": 63148,
+                  "host": 21062,
+                  "protocol": "tcp"
+               },
+               {
+                  "container": 63148,
+                  "host": 21062,
+                  "protocol": "tcp"
+               }
+            ],
+            "services": [
+               "Rem fugiat est.",
+               "Quas enim magnam libero consectetur qui nesciunt.",
+               "Quam libero."
             ]
          }
       ],
-      "name": "Cupiditate dignissimos et nemo.",
+      "name": "Necessitatibus et autem placeat et.",
       "parameters": [
          {
-            "name": "xm",
-            "source": "configurable",
-            "type": "int",
-            "value": "Eius alias."
+            "name": "m",
+            "value": "Voluptatem est eius alias est sit."
          },
          {
-            "name": "xm",
-            "source": "configurable",
-            "type": "int",
-            "value": "Eius alias."
+            "name": "m",
+            "value": "Voluptatem est eius alias est sit."
          },
          {
-            "name": "xm",
-            "source": "configurable",
-            "type": "int",
-            "value": "Eius alias."
+            "name": "m",
+            "value": "Voluptatem est eius alias est sit."
          }
       ]
    }'` + "\n" +
@@ -253,73 +311,131 @@ Example:
     %[1]s deployments upsert --body '{
       "containers": [
          {
-            "image": "Voluptatibus maiores qui voluptatem.",
-            "name": "Iste non quisquam sed architecto.",
+            "image": "Quisquam sed.",
+            "name": "Dignissimos et nemo sunt commodi iste.",
             "parameters": [
                {
                   "environment": [
-                     "Veritatis libero.",
-                     "Aut recusandae et temporibus asperiores."
+                     "Voluptatem laboriosam perspiciatis est.",
+                     "Est veritatis.",
+                     "Quo aut recusandae.",
+                     "Temporibus asperiores et voluptatem a consequatur ut."
                   ],
                   "files": [
-                     "A consequatur ut qui natus voluptatem necessitatibus.",
-                     "Aliquam consequatur est voluptates ullam voluptate esse.",
-                     "Aut et totam voluptatem quia illo voluptate.",
-                     "Ex rem fugiat est animi."
+                     "Voluptatem necessitatibus labore aliquam consequatur est.",
+                     "Ullam voluptate esse.",
+                     "Aut et totam voluptatem quia illo voluptate."
                   ],
-                  "name": "j"
+                  "name": "z"
                },
                {
                   "environment": [
-                     "Veritatis libero.",
-                     "Aut recusandae et temporibus asperiores."
+                     "Voluptatem laboriosam perspiciatis est.",
+                     "Est veritatis.",
+                     "Quo aut recusandae.",
+                     "Temporibus asperiores et voluptatem a consequatur ut."
                   ],
                   "files": [
-                     "A consequatur ut qui natus voluptatem necessitatibus.",
-                     "Aliquam consequatur est voluptates ullam voluptate esse.",
-                     "Aut et totam voluptatem quia illo voluptate.",
-                     "Ex rem fugiat est animi."
+                     "Voluptatem necessitatibus labore aliquam consequatur est.",
+                     "Ullam voluptate esse.",
+                     "Aut et totam voluptatem quia illo voluptate."
                   ],
-                  "name": "j"
+                  "name": "z"
                }
             ],
             "ports": [
                {
-                  "container": 21062,
-                  "host": 3960,
-                  "protocol": "udp"
+                  "container": 63148,
+                  "host": 21062,
+                  "protocol": "tcp"
                },
                {
-                  "container": 21062,
-                  "host": 3960,
-                  "protocol": "udp"
+                  "container": 63148,
+                  "host": 21062,
+                  "protocol": "tcp"
+               },
+               {
+                  "container": 63148,
+                  "host": 21062,
+                  "protocol": "tcp"
                }
             ],
             "services": [
-               "Magnam libero consectetur qui.",
-               "Alias quam."
+               "Rem fugiat est.",
+               "Quas enim magnam libero consectetur qui nesciunt.",
+               "Quam libero."
+            ]
+         },
+         {
+            "image": "Quisquam sed.",
+            "name": "Dignissimos et nemo sunt commodi iste.",
+            "parameters": [
+               {
+                  "environment": [
+                     "Voluptatem laboriosam perspiciatis est.",
+                     "Est veritatis.",
+                     "Quo aut recusandae.",
+                     "Temporibus asperiores et voluptatem a consequatur ut."
+                  ],
+                  "files": [
+                     "Voluptatem necessitatibus labore aliquam consequatur est.",
+                     "Ullam voluptate esse.",
+                     "Aut et totam voluptatem quia illo voluptate."
+                  ],
+                  "name": "z"
+               },
+               {
+                  "environment": [
+                     "Voluptatem laboriosam perspiciatis est.",
+                     "Est veritatis.",
+                     "Quo aut recusandae.",
+                     "Temporibus asperiores et voluptatem a consequatur ut."
+                  ],
+                  "files": [
+                     "Voluptatem necessitatibus labore aliquam consequatur est.",
+                     "Ullam voluptate esse.",
+                     "Aut et totam voluptatem quia illo voluptate."
+                  ],
+                  "name": "z"
+               }
+            ],
+            "ports": [
+               {
+                  "container": 63148,
+                  "host": 21062,
+                  "protocol": "tcp"
+               },
+               {
+                  "container": 63148,
+                  "host": 21062,
+                  "protocol": "tcp"
+               },
+               {
+                  "container": 63148,
+                  "host": 21062,
+                  "protocol": "tcp"
+               }
+            ],
+            "services": [
+               "Rem fugiat est.",
+               "Quas enim magnam libero consectetur qui nesciunt.",
+               "Quam libero."
             ]
          }
       ],
-      "name": "Cupiditate dignissimos et nemo.",
+      "name": "Necessitatibus et autem placeat et.",
       "parameters": [
          {
-            "name": "xm",
-            "source": "configurable",
-            "type": "int",
-            "value": "Eius alias."
+            "name": "m",
+            "value": "Voluptatem est eius alias est sit."
          },
          {
-            "name": "xm",
-            "source": "configurable",
-            "type": "int",
-            "value": "Eius alias."
+            "name": "m",
+            "value": "Voluptatem est eius alias est sit."
          },
          {
-            "name": "xm",
-            "source": "configurable",
-            "type": "int",
-            "value": "Eius alias."
+            "name": "m",
+            "value": "Voluptatem est eius alias est sit."
          }
       ]
    }'
@@ -343,7 +459,7 @@ Get implements get.
     -p STRING: Name of the Deployment
 
 Example:
-    %[1]s deployments get --p "Et aut ipsam in laborum distinctio veniam."
+    %[1]s deployments get --p "Et cumque temporibus sit."
 `, os.Args[0])
 }
 
@@ -354,6 +470,6 @@ Delete implements delete.
     -p STRING: Name of the Deployment
 
 Example:
-    %[1]s deployments delete --p "Necessitatibus et autem placeat et."
+    %[1]s deployments delete --p "Et aut ipsam in laborum distinctio veniam."
 `, os.Args[0])
 }

@@ -11,7 +11,8 @@
             "mode": "debug",
             "program": "cmd/http",
             "env": {
-                "CP2_DATABASE.FS.LOCATION": "/home/luca/control-panel-2/db/"
+                "CP2_DATABASE.FS.LOCATION": "/home/acul/control-panel-2/db/",
+                "CP2_SCHEDULER.DOCKER.BINDLOCATION": "/home/acul/control-panel-2/bind"
             }
         }
     ]

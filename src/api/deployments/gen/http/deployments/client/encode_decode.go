@@ -354,10 +354,8 @@ func marshalDeploymentsParameterToParameterRequestBody(v *deployments.Parameter)
 		return nil
 	}
 	res := &ParameterRequestBody{
-		Name:   v.Name,
-		Source: v.Source,
-		Type:   v.Type,
-		Value:  v.Value,
+		Name:  v.Name,
+		Value: v.Value,
 	}
 
 	return res
@@ -440,10 +438,8 @@ func marshalParameterRequestBodyToDeploymentsParameter(v *ParameterRequestBody) 
 		return nil
 	}
 	res := &deployments.Parameter{
-		Name:   v.Name,
-		Source: v.Source,
-		Type:   v.Type,
-		Value:  v.Value,
+		Name:  v.Name,
+		Value: v.Value,
 	}
 
 	return res
@@ -526,10 +522,8 @@ func unmarshalParameterResponseBodyToDeploymentsParameter(v *ParameterResponseBo
 		return nil
 	}
 	res := &deployments.Parameter{
-		Name:   *v.Name,
-		Source: *v.Source,
-		Type:   *v.Type,
-		Value:  v.Value,
+		Name:  *v.Name,
+		Value: *v.Value,
 	}
 
 	return res

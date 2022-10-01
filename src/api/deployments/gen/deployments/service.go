@@ -51,10 +51,8 @@ type Deployment struct {
 }
 
 type Parameter struct {
-	Name   string
-	Source string
-	Type   string
-	Value  *string
+	Name  string
+	Value string
 }
 
 type ParameterUsage struct {
