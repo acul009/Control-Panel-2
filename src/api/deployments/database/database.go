@@ -1,6 +1,8 @@
 package database
 
 import (
+	"fmt"
+
 	"github.com/acul009/control-panel-2/src/api/deployments/database/filesystemdb"
 	"github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
 	"github.com/acul009/control-panel-2/src/api/deployments/scheduler"
@@ -17,6 +19,7 @@ type Database interface {
 var db Database = nil
 
 func GetDatabase() Database {
+	fmt.Println("requesting Database")
 	if db == nil {
 		var provider Database
 		viper.AutomaticEnv()
@@ -40,9 +43,8 @@ type databaseHook struct {
 	Database
 }
 
-var sched = scheduler.GetScheduler()
-
 func (hook databaseHook) Save(deployment *deployments.Deployment) error {
+	sched := scheduler.GetScheduler()
 	err := sched.Sync(deployment)
 	if err != nil {
 		return err
@@ -60,6 +62,7 @@ func (hook databaseHook) Load(deploymentName string) (*deployments.Deployment, e
 }
 
 func (hook databaseHook) Delete(deploymentName string) error {
+	sched := scheduler.GetScheduler()
 	sched.Delete(deploymentName)
 	return hook.Database.Delete(deploymentName)
 }
