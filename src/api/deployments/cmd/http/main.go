@@ -13,10 +13,17 @@ import (
 	"syscall"
 
 	deploymentsapi "github.com/acul009/control-panel-2/src/api/deployments"
+	"github.com/acul009/control-panel-2/src/api/deployments/config"
 	deployments "github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
 )
 
 func main() {
+	fmt.Println("starting main")
+	//initialize viper
+	config.InitViper()
+
+	fmt.Println("viper ready")
+
 	// Define command line flags, add any other flag required to configure the
 	// service.
 	var (

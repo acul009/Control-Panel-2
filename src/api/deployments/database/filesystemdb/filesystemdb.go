@@ -28,7 +28,7 @@ func CreateFilesystemDB() *FilesystemDB {
 }
 
 func (db FilesystemDB) createLocation() {
-	err := os.MkdirAll(db.path, 0700)
+	err := os.MkdirAll(db.path, os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
