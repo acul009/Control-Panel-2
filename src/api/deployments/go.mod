@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/docker/go-connections v0.4.0
-	goa.design/goa/v3 v3.8.5
+	goa.design/goa/v3 v3.9.1
 )
 
 require (
