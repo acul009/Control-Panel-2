@@ -1,0 +1,16 @@
+name: search
+parameters:
+  - name: location
+    value: http://localhost:80
+containers:
+  - name: searxng
+    image: searxng/searxng
+    ports:
+      - host: 80
+        container: 8080
+        protocol: tcp
+    parameters:
+      - name: location
+        environment:
+          - BASE_URL
+          

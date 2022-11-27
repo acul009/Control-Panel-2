@@ -9,13 +9,10 @@ import (
 func (docker *Docker) Sync(deployment *deployments.Deployment) error {
 	docker.Delete(deployment.Name)
 
-	err := docker.saveFileParameters(deployment)
-	if err != nil {
-		return fmt.Errorf("error syncing deployment: %f", err)
-	}
+	docker.removeFileParameters(deployment.Name)
 
 	for _, container := range deployment.Containers {
-		err := docker.schedule(container, deployment.Name)
+		err := docker.schedule(container, deployment.Name, deployment.Parameters)
 		if err != nil {
 			return fmt.Errorf("error syncing deployment: %f", err)
 		}

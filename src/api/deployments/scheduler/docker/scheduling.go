@@ -13,40 +13,40 @@ import (
 	"github.com/docker/go-connections/nat"
 )
 
-func (docker *Docker) schedule(container *deployments.Container, deployment string) error {
-	var err error = docker.createContainer(container, true, deployment)
+func (docker *Docker) schedule(container *deployments.Container, deploymentName string, parameters []*deployments.Parameter) error {
+	var err error = docker.createContainer(container, true, deploymentName, parameters)
 
-	identifier := docker.getContainerIdentifier(container.Name, deployment)
+	identifier := docker.getContainerIdentifier(container.Name, deploymentName)
 
 	switch err.(type) {
 
 	case dockerErrors.ErrConflict:
 		docker.deleteContainer(identifier)
-		err = docker.createContainer(container, false, deployment)
+		err = docker.createContainer(container, false, deploymentName, parameters)
 	}
 
 	if err != nil {
-		return fmt.Errorf("error scheduling deployment: %w", err)
+		return fmt.Errorf("error creating container %s: %w", container.Name, err)
 	}
 
 	err = docker.startContainer(identifier)
 
 	if err != nil {
-		return fmt.Errorf("error starting deployment: %w", err)
+		return fmt.Errorf("error creating container %s: %w", container.Name, err)
 	}
 
 	return nil
 }
 
-func (docker *Docker) getContainerIdentifier(containerName string, deployment string) string {
-	return docker.schedulerName + "-" + deployment + "-" + containerName
+func (docker *Docker) getContainerIdentifier(containerName string, deploymentName string) string {
+	return docker.schedulerName + "-" + deploymentName + "-" + containerName
 }
 
 const MANGER_LABEL = LABEL_PREFIX + ".manager"
 const DEPLOYMENT_LABEL = LABEL_PREFIX + ".deployment"
 const CONTAINER_LABEL = LABEL_PREFIX + ".name"
 
-func (docker *Docker) createContainer(container *deployments.Container, pullImage bool, deployment string) error {
+func (docker *Docker) createContainer(container *deployments.Container, pullImage bool, deploymentName string, parameters []*deployments.Parameter) error {
 	var err error
 	if pullImage {
 		err = docker.pullImage(container.Image)
@@ -56,13 +56,20 @@ func (docker *Docker) createContainer(container *deployments.Container, pullImag
 		return fmt.Errorf("error requesting image: %w", err)
 	}
 
+	environment, err := docker.generateEnvParameterBindings(deploymentName, container.Parameters, parameters)
+
+	if err != nil {
+		return fmt.Errorf("error creating environment: %f", err)
+	}
+
 	_, err = docker.cli.ContainerCreate(docker.ctx, &dockerContainer.Config{
 		Image: container.Image,
 		Labels: map[string]string{
 			MANGER_LABEL:     docker.schedulerName,
-			DEPLOYMENT_LABEL: deployment,
+			DEPLOYMENT_LABEL: deploymentName,
 			CONTAINER_LABEL:  container.Name,
 		},
+		Env: environment,
 	},
 		&dockerContainer.HostConfig{
 			RestartPolicy: dockerContainer.RestartPolicy{
@@ -73,10 +80,10 @@ func (docker *Docker) createContainer(container *deployments.Container, pullImag
 			},
 			PortBindings: docker.createPortMap(container),
 			//ReadonlyRootfs: true,
-			Binds: docker.generateFileParameterBindings(deployment, container.Parameters),
+			Binds: docker.generateFileParameterBindings(deploymentName, container.Parameters, parameters),
 		},
 		nil, nil,
-		docker.getContainerIdentifier(container.Name, deployment),
+		docker.getContainerIdentifier(container.Name, deploymentName),
 	)
 
 	return err
@@ -85,7 +92,7 @@ func (docker *Docker) createContainer(container *deployments.Container, pullImag
 func (docker *Docker) createPortMap(container *deployments.Container) nat.PortMap {
 	var ports nat.PortMap = make(nat.PortMap, len(container.Ports))
 	for _, portMapping := range container.Ports {
-		ports[nat.Port(fmt.Sprintf("%v/%s", portMapping.Host, portMapping.Protocol))] = []nat.PortBinding{{
+		ports[nat.Port(fmt.Sprintf("%v/%s", portMapping.Container, portMapping.Protocol))] = []nat.PortBinding{{
 			HostPort: fmt.Sprintf("%v", portMapping.Host),
 		}}
 	}

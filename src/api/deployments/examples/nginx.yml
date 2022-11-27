@@ -1,8 +1,6 @@
 name: web
 parameters:
   - name: hellofile
-    source: static
-    type: string
     value: Hello there, General Kenobi
 containers:
   - name: nginx
