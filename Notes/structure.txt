@@ -1,0 +1,36 @@
+This file holds some thoughtss on how this software should function as a whole.
+
+1) This new control panel uses a microservice architecture.
+While I usually don't like those buzzwords there are some reasons I will explain why I think this makes sense.
+
+- For one I want others than me to be able to expand this project.
+  Unfortunately not everyone is able to master all languages or easily read code.
+  Some languages are also better suited for certain tasks.
+
+- Security is another concern. I want to be able to install plugins without instantly granting the software access to my whole system.
+  Every Microservice is supposed to be a plugin, which only interacts with other plugins through the unified api
+
+- Because of this I want a path based permission system. Every API-Endpoint also is a permission.
+  Every api request will run through a filter, which checks if a token has permission to access a resource.
+  If the token has the required permissions, the request will be relayed to the reverse proxy, 
+  which sends the request to the correct microservice.
+  This way plugins should almost never need to implement their own rights managment.
+  A URL always includes all sub-paths too, which means the permission /api/users also includes /api/users/create
+  While this breaks the correct REST-Pattern, I think its worth it.
+
+2) The system needs some basic services to work at all.
+- The Core (/api/deployments):
+  The core is a translator, which translates the custom deployment format to docker, podman or kubernetes configurations
+
+- The service reverse-proxy:
+  The service reverse-proxy distributes requests to the correct microservice. The config has to be controlled by the core.
+
+- The permission gateway
+  This service will check all incoming requests if the given token has permission to access the requested resource.
+  if it doesn't have the correct permissions, the request will be denied with a 403 status code.
+
+
+3) The system needs to be self-bootstraping and self-repairing
+
+- The core has to be able to automatically install all services for basic operation.
+  The basic configuration should give access to a Web-UI used to install other plugins or applications.
