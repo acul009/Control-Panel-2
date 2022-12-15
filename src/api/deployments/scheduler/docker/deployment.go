@@ -7,14 +7,22 @@ import (
 )
 
 func (docker *Docker) Sync(deployment *deployments.Deployment) error {
-	docker.Delete(deployment.Name)
-
 	docker.removeFileParameters(deployment.Name)
 
+	containerSet := make(map[string]struct{}, len(deployment.Containers))
+
 	for _, container := range deployment.Containers {
+		containerSet[deployment.Name] = struct{}{}
 		err := docker.schedule(container, deployment.Name, deployment.Parameters)
 		if err != nil {
 			return fmt.Errorf("error syncing deployment: %f", err)
+		}
+	}
+
+	runningContainers, _ := docker.listContainers(deployment.Name)
+	for _, containerName := range runningContainers {
+		if _, scheduled := containerSet[containerName]; !scheduled {
+			docker.unschedule(containerName)
 		}
 	}
 

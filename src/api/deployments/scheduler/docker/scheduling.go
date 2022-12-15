@@ -1,8 +1,12 @@
 package docker
 
 import (
+	"crypto"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/acul009/control-panel-2/src/api/deployments/gen/deployments"
 
@@ -14,9 +18,22 @@ import (
 )
 
 func (docker *Docker) schedule(container *deployments.Container, deploymentName string, parameters []*deployments.Parameter) error {
-	var err error = docker.createContainer(container, true, deploymentName, parameters)
 
 	identifier := docker.getContainerIdentifier(container.Name, deploymentName)
+
+	currentConfig, err := docker.cli.ContainerInspect(docker.ctx, identifier)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		currentHash := currentConfig.Config.Labels[CONTAINER_HASH]
+		newHash := createContainerHash(container, parameters)--
+		if currentHash == newHash {
+			//if hashes match, theres no need to recreate the container
+			return nil
+		}
+	}
+
+	err = docker.createContainer(container, true, deploymentName, parameters)
 
 	switch err.(type) {
 
@@ -45,6 +62,7 @@ func (docker *Docker) getContainerIdentifier(containerName string, deploymentNam
 const MANGER_LABEL = LABEL_PREFIX + ".manager"
 const DEPLOYMENT_LABEL = LABEL_PREFIX + ".deployment"
 const CONTAINER_LABEL = LABEL_PREFIX + ".name"
+const CONTAINER_HASH = LABEL_PREFIX + ".hash"
 
 func (docker *Docker) createContainer(container *deployments.Container, pullImage bool, deploymentName string, parameters []*deployments.Parameter) error {
 	var err error
@@ -62,12 +80,17 @@ func (docker *Docker) createContainer(container *deployments.Container, pullImag
 		return fmt.Errorf("error creating environment: %f", err)
 	}
 
+	bindList := docker.generateFileParameterBindings(deploymentName, container.Parameters, parameters)
+
+	hash := createContainerHash(container, parameters)
+
 	_, err = docker.cli.ContainerCreate(docker.ctx, &dockerContainer.Config{
 		Image: container.Image,
 		Labels: map[string]string{
 			MANGER_LABEL:     docker.schedulerName,
 			DEPLOYMENT_LABEL: deploymentName,
 			CONTAINER_LABEL:  container.Name,
+			CONTAINER_HASH:   hash,
 		},
 		Env: environment,
 	},
@@ -80,13 +103,35 @@ func (docker *Docker) createContainer(container *deployments.Container, pullImag
 			},
 			PortBindings: docker.createPortMap(container),
 			//ReadonlyRootfs: true,
-			Binds: docker.generateFileParameterBindings(deploymentName, container.Parameters, parameters),
+			Binds: bindList,
 		},
 		nil, nil,
 		docker.getContainerIdentifier(container.Name, deploymentName),
 	)
 
 	return err
+}
+
+func createContainerHash(container *deployments.Container, parameters []*deployments.Parameter) string {
+	sb := strings.Builder{}
+
+	paramValues := make(map[string]string)
+
+	for _, param := range parameters {
+		paramValues[param.Name] = param.Value
+	}
+
+	for _, param := range container.Parameters {
+		sb.WriteString(paramValues[*param.Name])
+		sb.WriteString("\n")
+	}
+
+	config, _ := json.Marshal(container)
+
+	sb.Write(config)
+	hasher := crypto.MD5.New()
+	hasher.Write([]byte(sb.String()))
+	return hex.EncodeToString(hasher.Sum(nil))
 }
 
 func (docker *Docker) createPortMap(container *deployments.Container) nat.PortMap {
