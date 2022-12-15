@@ -26,7 +26,7 @@ func (docker *Docker) schedule(container *deployments.Container, deploymentName 
 		fmt.Println(err)
 	} else {
 		currentHash := currentConfig.Config.Labels[CONTAINER_HASH]
-		newHash := createContainerHash(container, parameters)--
+		newHash := createContainerHash(container, parameters)
 		if currentHash == newHash {
 			//if hashes match, theres no need to recreate the container
 			return nil
